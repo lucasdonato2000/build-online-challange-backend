@@ -1,4 +1,4 @@
-import NoteModel from "../models/NoteModel";
+import { NoteModel } from "../models/NoteModel";
 import { Note } from "../interfaces";
 import openDB from "../db/database";
 
@@ -12,26 +12,42 @@ export class NoteRepository {
   }
 
   private async getNoteModel(): Promise<NoteModel> {
-    if (!this.noteModel) {
-      const db = await openDB();
-      this.noteModel = new NoteModel(db);
+    try {
+      if (!this.noteModel) {
+        const db = await openDB();
+        this.noteModel = new NoteModel(db);
+      }
+      return this.noteModel;
+    } catch (error) {
+      throw error;
     }
-    return this.noteModel;
   }
 
   async getNotesByUserId(userId: string): Promise<Note[]> {
-    const noteModel = await this.getNoteModel();
-    return noteModel.getAllByUserId(userId);
+    try {
+      const noteModel = await this.getNoteModel();
+      return noteModel.getAllByUserId(userId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getNoteById(userId: string, noteId: string): Promise<Note | undefined> {
-    const noteModel = await this.getNoteModel();
-    return noteModel.getById(userId, noteId);
+    try {
+      const noteModel = await this.getNoteModel();
+      return noteModel.getById(userId, noteId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addNote(note: Note): Promise<Note> {
-    const noteModel = await this.getNoteModel();
-    return noteModel.create(note);
+    try {
+      const noteModel = await this.getNoteModel();
+      return noteModel.create(note);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateNote(
@@ -39,7 +55,11 @@ export class NoteRepository {
     noteId: string,
     noteData: Partial<Note>
   ): Promise<Note | null> {
-    const noteModel = await this.getNoteModel();
-    return noteModel.update(userId, noteId, noteData);
+    try {
+      const noteModel = await this.getNoteModel();
+      return noteModel.update(userId, noteId, noteData);
+    } catch (error) {
+      throw error;
+    }
   }
 }

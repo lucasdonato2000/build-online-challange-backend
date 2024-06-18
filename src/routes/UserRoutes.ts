@@ -2,7 +2,7 @@ import express from "express";
 import { UserController } from "../controllers/UserController";
 import { UserService } from "../services/UserService";
 import { UserRepository } from "../repositories/UserRespository";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { authMiddleware } from "../middleware";
 
 const userRepository = new UserRepository();
 const userService = new UserService(userRepository);
@@ -14,4 +14,4 @@ router.use(authMiddleware);
 
 router.get("/user", userController.getUserHandler);
 
-export default router;
+export { router };

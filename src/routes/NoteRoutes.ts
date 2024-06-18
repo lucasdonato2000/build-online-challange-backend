@@ -2,7 +2,7 @@ import express from "express";
 import { NoteController } from "../controllers/NoteController";
 import { NoteService } from "../services/NoteService";
 import { NoteRepository } from "../repositories/NoteRepository";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { authMiddleware } from "../middleware";
 
 const noteRepository = new NoteRepository();
 const noteService = new NoteService(noteRepository);
@@ -17,4 +17,4 @@ router.get("/notes/:noteId", noteController.getNoteHandler);
 router.post("/contacts/:contactId/notes", noteController.createNoteHandler);
 router.put("/notes/:noteId", noteController.updateNoteHandler);
 
-export default router;
+export { router };

@@ -1,16 +1,24 @@
 import { Note } from "../interfaces";
-import { NoteRepository } from "../repositories/NoteRepository";
+import { NoteRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
 
 export class NoteService {
   constructor(private noteRepository: NoteRepository) {}
 
   async getNotes(userId: string): Promise<Note[]> {
-    return await this.noteRepository.getNotesByUserId(userId);
+    try {
+      return await this.noteRepository.getNotesByUserId(userId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getNote(userId: string, noteId: string): Promise<Note | undefined> {
-    return await this.noteRepository.getNoteById(userId, noteId);
+    try {
+      return await this.noteRepository.getNoteById(userId, noteId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addNote(
@@ -18,15 +26,19 @@ export class NoteService {
     contactId: string,
     noteData: Partial<Note>
   ): Promise<Note> {
-    const newNote: Note = {
-      id: uuidv4(),
-      userId,
-      contactId,
-      content: noteData.content!,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return await this.noteRepository.addNote(newNote);
+    try {
+      const newNote: Note = {
+        id: uuidv4(),
+        userId,
+        contactId,
+        content: noteData.content!,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      return await this.noteRepository.addNote(newNote);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async modifyNote(
@@ -34,6 +46,10 @@ export class NoteService {
     noteId: string,
     noteData: Partial<Note>
   ): Promise<Note | null> {
-    return await this.noteRepository.updateNote(userId, noteId, noteData);
+    try {
+      return await this.noteRepository.updateNote(userId, noteId, noteData);
+    } catch (error) {
+      throw error;
+    }
   }
 }

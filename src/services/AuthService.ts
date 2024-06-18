@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { UserRepository } from "../repositories/UserRespository";
+import { UserRepository } from "../repositories";
 import { generateToken } from "../utils/jwt";
 
 export class AuthService {
@@ -9,11 +9,15 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<string | null> {
-    const user = await this.userRepository.findUserByEmail(email);
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return generateToken(user);
-    } else {
-      return null;
+    try {
+      const user = await this.userRepository.findUserByEmail(email);
+      if (user && (await bcrypt.compare(password, user.password))) {
+        return generateToken(user);
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -1,4 +1,4 @@
-import UserModel from "../models/UserModel";
+import { UserModel } from "../models/UserModel";
 import { User, UserData } from "../interfaces";
 import openDB from "../db/database";
 
@@ -13,19 +13,31 @@ export class UserRepository {
 
   private async getUserModel(): Promise<UserModel> {
     if (!this.userModel) {
-      const db = await openDB();
-      this.userModel = new UserModel(db);
+      try {
+        const db = await openDB();
+        this.userModel = new UserModel(db);
+      } catch (error) {
+        throw error;
+      }
     }
     return this.userModel;
   }
 
   async findUserByEmail(email: string): Promise<User | undefined> {
-    const userModel = await this.getUserModel();
-    return await userModel.findByEmail(email);
+    try {
+      const userModel = await this.getUserModel();
+      return await userModel.findByEmail(email);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getUserById(userId: string): Promise<UserData | undefined> {
-    const userModel = await this.getUserModel();
-    return await userModel.getById(userId);
+    try {
+      const userModel = await this.getUserModel();
+      return await userModel.getById(userId);
+    } catch (error) {
+      throw error;
+    }
   }
 }

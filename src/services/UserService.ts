@@ -1,9 +1,14 @@
-import { User, UserData } from "../interfaces";
-import { UserRepository } from "../repositories/UserRespository";
+import { UserData } from "../interfaces";
+import { UserRepository } from "../repositories";
+
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
   async getUser(userId: string): Promise<UserData | undefined> {
-    return await this.userRepository.getUserById(userId);
+    try {
+      return await this.userRepository.getUserById(userId);
+    } catch (error) {
+      throw error;
+    }
   }
 }
