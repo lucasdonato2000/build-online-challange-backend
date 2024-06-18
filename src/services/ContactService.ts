@@ -1,6 +1,8 @@
 import { Contact } from "../interfaces";
-import { ContactRepository } from "../repositories/ContactRepository";
+import { ContactRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
+import path from "path";
+import fs from "fs";
 
 export class ContactService {
   constructor(private contactRepository: ContactRepository) {}
@@ -10,18 +12,26 @@ export class ContactService {
     limit: number,
     offset: number
   ): Promise<Contact[]> {
-    return await this.contactRepository.getContactsByUserId(
-      userId,
-      limit,
-      offset
-    );
+    try {
+      return await this.contactRepository.getContactsByUserId(
+        userId,
+        limit,
+        offset
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getContact(
     userId: string,
     contactId: string
   ): Promise<Contact | undefined> {
-    return await this.contactRepository.getContactById(userId, contactId);
+    try {
+      return await this.contactRepository.getContactById(userId, contactId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addContact(
@@ -37,8 +47,18 @@ export class ContactService {
       address: contactData.address!,
       profilePicture: contactData.profilePicture!,
     };
-    await this.contactRepository.addContact(newContact);
-    return newContact;
+    try {
+      await this.contactRepository.addContact(newContact);
+      return newContact;
+    } catch (error) {
+      const filePath = path.join(
+        __dirname,
+        "../../images",
+        newContact.profilePicture
+      );
+      fs.rmSync(filePath);
+      throw error;
+    }
   }
 
   async modifyContact(
@@ -46,14 +66,28 @@ export class ContactService {
     contactId: string,
     contactData: Partial<Contact>
   ): Promise<Contact | null> {
-    const contact = await this.contactRepository.getContactById(
-      userId,
-      contactId
-    );
-    if (!contact) {
-      return null;
+    try {
+      const contact = await this.contactRepository.getContactById(
+        userId,
+        contactId
+      );
+      if (!contact) {
+        return null;
+      }
+      await this.contactRepository.updateContact(
+        userId,
+        contactId,
+        contactData
+      );
+      const filePath = path.join(
+        __dirname,
+        "../../images",
+        contact.profilePicture
+      );
+      fs.rmSync(filePath);
+      return { ...contact, ...contactData };
+    } catch (error) {
+      throw error;
     }
-    await this.contactRepository.updateContact(userId, contactId, contactData);
-    return { ...contact, ...contactData };
   }
 }

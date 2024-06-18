@@ -1,12 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/AuthRoutes";
-import userRoutes from "./routes/UserRoutes";
-import contactRoutes from "./routes/ContactRoutes";
-import noteRoutes from "./routes/NoteRoutes";
+import { authRoutes, userRoutes, contactRoutes, noteRoutes } from "./routes";
 import setupDatabase from "./db/setupDatabase";
 import errorHandler from "./middleware/errorHandler";
+import path from "path";
 
 dotenv.config();
 
@@ -16,10 +14,11 @@ const port = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", authRoutes);
-app.use("/api", userRoutes);
-app.use("/api", contactRoutes);
-app.use("/api", noteRoutes);
+app.use("/images", express.static(path.join(__dirname, "../images")));
+app.use("/api", authRoutes.router);
+app.use("/api", userRoutes.router);
+app.use("/api", contactRoutes.router);
+app.use("/api", noteRoutes.router);
 
 app.use(errorHandler);
 

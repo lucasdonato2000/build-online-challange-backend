@@ -1,14 +1,14 @@
 import AppError from "../interfaces/appError";
 
-export class MissingEnvError extends Error implements AppError {
+export class DatabaseError extends Error implements AppError {
   status: number;
   isOperational: boolean;
 
   constructor(message: string) {
     super(message);
-    this.name = "MissingEnvError";
+    this.name = "DatabaseError";
     this.status = 500;
-    this.isOperational = false;
+    this.isOperational = true;
 
     Error.captureStackTrace(this, this.constructor);
   }

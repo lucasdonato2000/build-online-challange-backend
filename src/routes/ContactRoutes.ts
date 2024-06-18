@@ -1,6 +1,11 @@
 import express from "express";
-import { ContactController } from "../controllers/ContactController";
-import { authMiddleware } from "../middleware/authMiddleware";
+import { ContactController } from "../controllers";
+import {
+  authMiddleware,
+  uploadMiddleware,
+  validateContact,
+  validateUpdateContact,
+} from "../middleware";
 
 const contactController = new ContactController();
 
@@ -10,7 +15,17 @@ router.use(authMiddleware);
 
 router.get("/contacts", contactController.getContactsHandler);
 router.get("/contacts/:contactId", contactController.getContactHandler);
-router.post("/contacts", contactController.addContactHandler);
-router.put("/contacts/:contactId", contactController.updateContactHandler);
+router.post(
+  "/contacts",
+  uploadMiddleware.single("profilePicture"),
+  validateContact,
+  contactController.addContactHandler
+);
+router.put(
+  "/contacts/:contactId",
+  uploadMiddleware.single("profilePicture"),
+  validateUpdateContact,
+  contactController.updateContactHandler
+);
 
-export default router;
+export { router };

@@ -1,8 +1,8 @@
-import ContactModel from "../models/ContactModel";
+import { ContactModel } from "../models/ContactModel";
 import { Contact } from "../interfaces";
 import openDB from "../db/database";
 
-class ContactRepository {
+export class ContactRepository {
   private contactModel: ContactModel | null = null;
 
   constructor() {
@@ -12,11 +12,15 @@ class ContactRepository {
   }
 
   private async getContactModel(): Promise<ContactModel> {
-    if (!this.contactModel) {
-      const db = await openDB();
-      this.contactModel = new ContactModel(db);
+    try {
+      if (!this.contactModel) {
+        const db = await openDB();
+        this.contactModel = new ContactModel(db);
+      }
+      return this.contactModel;
+    } catch (error) {
+      throw error;
     }
-    return this.contactModel;
   }
 
   async getContactsByUserId(
@@ -24,21 +28,33 @@ class ContactRepository {
     limit: number,
     offset: number
   ): Promise<Contact[]> {
-    const contactModel = await this.getContactModel();
-    return contactModel.getContactsByUserId(userId, limit, offset);
+    try {
+      const contactModel = await this.getContactModel();
+      return contactModel.getContactsByUserId(userId, limit, offset);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getContactById(
     userId: string,
     contactId: string
   ): Promise<Contact | undefined> {
-    const contactModel = await this.getContactModel();
-    return contactModel.getContactById(userId, contactId);
+    try {
+      const contactModel = await this.getContactModel();
+      return contactModel.getContactById(userId, contactId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addContact(contact: Contact): Promise<void> {
-    const contactModel = await this.getContactModel();
-    return contactModel.addContact(contact);
+    try {
+      const contactModel = await this.getContactModel();
+      return contactModel.addContact(contact);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateContact(
@@ -46,9 +62,21 @@ class ContactRepository {
     contactId: string,
     contactData: Partial<Contact>
   ): Promise<void> {
-    const contactModel = await this.getContactModel();
-    return contactModel.updateContact(userId, contactId, contactData);
+    try {
+      const fields = Object.entries(contactData)
+        .filter(([, value]) => value !== undefined)
+        .map(([key]) => key as keyof Contact);
+
+      const setClause = fields
+        .map((field) => `${String(field)} = ?`)
+        .join(", ");
+      const values = fields.map((field) => contactData[field]);
+
+      const contactModel = await this.getContactModel();
+      values.push(contactId, userId);
+      await contactModel.updateContact(userId, contactId, setClause, values);
+    } catch (error) {
+      throw error;
+    }
   }
 }
-
-export { ContactRepository };

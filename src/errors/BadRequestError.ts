@@ -13,5 +13,3 @@ export class BadRequestError extends Error implements AppError {
     Error.captureStackTrace(this, this.constructor);
   }
 }
-
-export default BadRequestError;

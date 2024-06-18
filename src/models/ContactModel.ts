@@ -1,7 +1,8 @@
 import { Database } from "sqlite";
 import { Contact } from "../interfaces";
+import { DatabaseError } from "../errors";
 
-class ContactModel {
+export class ContactModel {
   private db: Database;
 
   constructor(db: Database) {
@@ -13,55 +14,90 @@ class ContactModel {
     limit: number,
     offset: number
   ): Promise<Contact[]> {
-    return this.db.all<Contact[]>(
-      "SELECT * FROM contacts WHERE userId = ? LIMIT ? OFFSET ?",
-      [userId, limit, offset]
-    );
+    try {
+      return await this.db.all<Contact[]>(
+        "SELECT * FROM contacts WHERE userId = ? LIMIT ? OFFSET ?",
+        [userId, limit, offset]
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new DatabaseError(
+          `Error fetching contacts for user ${userId}: ${error.message}`
+        );
+      } else {
+        throw new DatabaseError(`Error fetching contacts for user ${userId}`);
+      }
+    }
   }
 
   async getContactById(
     userId: string,
     contactId: string
   ): Promise<Contact | undefined> {
-    return this.db.get<Contact>(
-      "SELECT * FROM contacts WHERE id = ? AND userId = ?",
-      [contactId, userId]
-    );
+    try {
+      return await this.db.get<Contact>(
+        "SELECT * FROM contacts WHERE id = ? AND userId = ?",
+        [contactId, userId]
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new DatabaseError(
+          `Error fetching contact ${contactId} for user ${userId}: ${error.message}`
+        );
+      } else {
+        throw new DatabaseError(
+          `Error fetching contact ${contactId} for user ${userId}`
+        );
+      }
+    }
   }
 
   async addContact(contact: Contact): Promise<void> {
-    await this.db.run(
-      "INSERT INTO contacts (id, userId, name, email, phone, address, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [
-        contact.id,
-        contact.userId,
-        contact.name,
-        contact.email,
-        contact.phone,
-        contact.address,
-        contact.profilePicture,
-      ]
-    );
+    try {
+      await this.db.run(
+        "INSERT INTO contacts (id, userId, name, email, phone, address, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [
+          contact.id,
+          contact.userId,
+          contact.name,
+          contact.email,
+          contact.phone,
+          contact.address,
+          contact.profilePicture,
+        ]
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new DatabaseError(
+          `Error adding contact for user ${contact.userId}: ${error.message}`
+        );
+      } else {
+        throw new DatabaseError(
+          `Error adding contact for user ${contact.userId}`
+        );
+      }
+    }
   }
 
   async updateContact(
     userId: string,
     contactId: string,
-    contactData: Partial<Contact>
+    setClause: string,
+    values: (string | number | undefined)[]
   ): Promise<void> {
-    await this.db.run(
-      "UPDATE contacts SET name = ?, email = ?, phone = ?, address = ?, profilePicture = ? WHERE id = ? AND userId = ?",
-      [
-        contactData.name,
-        contactData.email,
-        contactData.phone,
-        contactData.address,
-        contactData.profilePicture,
-        contactId,
-        userId,
-      ]
-    );
+    try {
+      const query = `UPDATE contacts SET ${setClause} WHERE id = ? AND userId = ?`;
+      await this.db.run(query, values);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new DatabaseError(
+          `Error updating contact ${contactId} for user ${userId}: ${error.message}`
+        );
+      } else {
+        throw new DatabaseError(
+          `Error updating contact ${contactId} for user ${userId}`
+        );
+      }
+    }
   }
 }
-
-export default ContactModel;

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ContactService } from "../services/ContactService";
+import { ContactService } from "../services";
 import { ContactRepository } from "../repositories/ContactRepository";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../errors";
 
@@ -34,6 +34,10 @@ export class ContactController {
         limitNumber,
         offsetNumber
       );
+      contacts.map((contact) => {
+        const imageUrl = this.urlMaker(req, contact.profilePicture);
+        contact.profilePicture = imageUrl;
+      });
       res.json(contacts);
     } catch (error) {
       next(error);
@@ -53,11 +57,13 @@ export class ContactController {
         req.user.id,
         req.params.contactId
       );
-      if (contact) {
-        res.json(contact);
-      } else {
+      if (!contact) {
         throw new NotFoundError("Contact not found");
       }
+
+      const imageUrl = this.urlMaker(req, contact.profilePicture);
+
+      res.json({ ...contact, profilePicture: imageUrl });
     } catch (error) {
       next(error);
     }
@@ -76,7 +82,13 @@ export class ContactController {
         req.user.id,
         req.body
       );
-      res.status(201).json(newContact);
+
+      if (!newContact) {
+        throw new Error("Unexpected error adding new user");
+      }
+
+      const imageUrl = this.urlMaker(req, newContact.profilePicture);
+      res.status(201).json({ ...newContact, profilePicture: imageUrl });
     } catch (error) {
       next(error);
     }
@@ -96,14 +108,19 @@ export class ContactController {
         req.params.contactId,
         req.body
       );
-      if (updatedContact) {
-        res.json(updatedContact);
-      } else {
+
+      if (!updatedContact) {
         throw new NotFoundError("Contact not found");
       }
+      const imageUrl = this.urlMaker(req, updatedContact.profilePicture);
+      res.status(201).json({ ...updatedContact, profilePicture: imageUrl });
     } catch (error) {
       next(error);
     }
+  };
+
+  urlMaker = (req: Request, profilePicture: string) => {
+    return `${req.protocol}://${req.get("host")}/images/${profilePicture}`;
   };
 }
 

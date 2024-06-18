@@ -2,12 +2,16 @@ import openDB from "./database";
 
 async function setupDatabase() {
   const db = await openDB();
+
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT NOT NULL,
       password TEXT NOT NULL
     );
+  `);
+
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS contacts (
       id TEXT PRIMARY KEY,
       userId TEXT,
@@ -16,8 +20,12 @@ async function setupDatabase() {
       phone TEXT,
       address TEXT,
       profilePicture TEXT,
-      FOREIGN KEY (userId) REFERENCES users(id)
+      FOREIGN KEY (userId) REFERENCES users(id),
+      UNIQUE (userId, name)
     );
+  `);
+
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS notes (
       id TEXT PRIMARY KEY,
       userId TEXT,
