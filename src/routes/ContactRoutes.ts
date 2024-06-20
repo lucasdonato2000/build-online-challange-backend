@@ -29,7 +29,6 @@ router.post(
   "/contacts",
   uploadMiddleware.single("profilePicture"),
   validateAddContact,
-  validateContactParam,
   contactController.addContactHandler
 );
 router.put(

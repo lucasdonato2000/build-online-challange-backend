@@ -59,7 +59,10 @@ export class ContactController implements IContactController {
 
       const imageUrl = this.urlMaker(req, contact.profilePicture);
 
-      res.json({ ...contact, profilePicture: imageUrl });
+      res.json({
+        ...contact,
+        profilePicture: imageUrl,
+      });
     } catch (error) {
       next(error);
     }

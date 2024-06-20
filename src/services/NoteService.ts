@@ -1,9 +1,14 @@
 import { INoteService, Note } from "../contracts";
 import { NoteRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
+import { ContactService } from "./ContactService";
+import { NotFoundError } from "../errors";
 
 export class NoteService implements INoteService {
-  constructor(private noteRepository: NoteRepository) {}
+  constructor(
+    private noteRepository: NoteRepository,
+    private contactService: ContactService
+  ) {}
 
   async getNotes(
     userId: string,
@@ -31,13 +36,17 @@ export class NoteService implements INoteService {
     content: string
   ): Promise<Note> {
     try {
+      const contact = await this.contactService.getContact(userId, contactId);
+      if (!contact) {
+        throw new NotFoundError("Contact not found");
+      }
       const newNote: Note = {
         id: uuidv4(),
         userId,
         contactId,
         content: content,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       return await this.noteRepository.addNote(newNote);
     } catch (error) {

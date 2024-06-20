@@ -45,8 +45,12 @@ export class ContactService implements IContactService {
       email: contactData.email!,
       phone: contactData.phone!,
       address: contactData.address!,
+      title: contactData.title!,
       profilePicture: contactData.profilePicture!,
+      updatedAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
     };
+
     try {
       await this.contactRepository.addContact(newContact);
       return newContact;
@@ -74,6 +78,7 @@ export class ContactService implements IContactService {
       if (!contact) {
         return null;
       }
+      contactData.updatedAt = new Date().toISOString();
       await this.contactRepository.updateContact(
         userId,
         contactId,

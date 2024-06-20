@@ -26,7 +26,7 @@ async function seedDatabase() {
         email: "contact1.user1@example.com",
         phone: "123-456-7890",
         address: "123 User1 St, City1",
-        profession: "Engineer",
+        title: "Engineer",
         profilePicture: "contact1_user1.png",
       },
       {
@@ -34,7 +34,7 @@ async function seedDatabase() {
         email: "contact2.user1@example.com",
         phone: "123-456-7891",
         address: "124 User1 St, City1",
-        profession: "Doctor",
+        title: "Doctor",
         profilePicture: "contact2_user1.png",
       },
       {
@@ -42,7 +42,7 @@ async function seedDatabase() {
         email: "contact3.user1@example.com",
         phone: "123-456-7892",
         address: "125 User1 St, City1",
-        profession: "Artist",
+        title: "Artist",
         profilePicture: "contact3_user1.png",
       },
       {
@@ -50,7 +50,7 @@ async function seedDatabase() {
         email: "contact4.user1@example.com",
         phone: "123-456-7893",
         address: "126 User1 St, City1",
-        profession: "Teacher",
+        title: "Teacher",
         profilePicture: "contact4_user1.png",
       },
       {
@@ -58,7 +58,7 @@ async function seedDatabase() {
         email: "contact5.user1@example.com",
         phone: "123-456-7894",
         address: "127 User1 St, City1",
-        profession: "Chef",
+        title: "Chef",
         profilePicture: "contact5_user1.png",
       },
     ],
@@ -69,7 +69,7 @@ async function seedDatabase() {
         email: "contact1.user2@example.com",
         phone: "223-456-7890",
         address: "223 User2 St, City2",
-        profession: "Lawyer",
+        title: "Lawyer",
         profilePicture: "contact1_user2.png",
       },
       {
@@ -77,7 +77,7 @@ async function seedDatabase() {
         email: "contact2.user2@example.com",
         phone: "223-456-7891",
         address: "224 User2 St, City2",
-        profession: "Musician",
+        title: "Musician",
         profilePicture: "contact2_user2.png",
       },
       {
@@ -85,11 +85,22 @@ async function seedDatabase() {
         email: "contact3.user2@example.com",
         phone: "223-456-7892",
         address: "225 User2 St, City2",
-        profession: "Scientist",
+        title: "Scientist",
         profilePicture: "contact3_user2.png",
       },
     ],
     [],
+  ];
+
+  const notes = [
+    [
+      { content: "Note1 for Contact1 User1" },
+      { content: "Note2 for Contact2 User1" },
+    ],
+    [
+      { content: "Note1 for Contact1 User2" },
+      { content: "Note2 for Contact2 User2" },
+    ],
   ];
 
   for (let i = 0; i < users.length; i++) {
@@ -107,8 +118,11 @@ async function seedDatabase() {
 
     for (const contact of contacts[i]) {
       const contactId = uuidv4();
+      const createdAt = new Date().toISOString();
+      const updatedAt = createdAt;
+
       await db.run(
-        "INSERT INTO contacts (id, userId, name, email, phone, address, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO contacts (id, userId, name, email, phone, address, title, profilePicture, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
           contactId,
           userId,
@@ -116,10 +130,22 @@ async function seedDatabase() {
           contact.email,
           contact.phone,
           contact.address,
+          contact.title,
           contact.profilePicture,
+          createdAt,
+          updatedAt,
         ]
       );
       console.log(`Contact seeded for user ${user.email}: ${contact.name}`);
+
+      for (const note of notes[i]) {
+        const noteId = uuidv4();
+        await db.run(
+          "INSERT INTO notes (id, userId, contactId, content, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)",
+          [noteId, userId, contactId, note.content, createdAt, updatedAt]
+        );
+        console.log(`Note seeded for contact ${contact.name}: ${note.content}`);
+      }
     }
   }
 }

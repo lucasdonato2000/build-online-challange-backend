@@ -30,12 +30,7 @@ export class NoteRepository implements INoteRepository {
   ): Promise<Note[]> {
     try {
       const noteModel = await this.getNoteModel();
-      const notes = await noteModel.getAllByUserId(userId, limit, offset);
-      notes.map((note) => {
-        note.createdAt = new Date(note.createdAt);
-        note.updatedAt = new Date(note.updatedAt);
-      });
-      return notes;
+      return await noteModel.getAllByUserId(userId, limit, offset);
     } catch (error) {
       throw error;
     }
@@ -44,12 +39,7 @@ export class NoteRepository implements INoteRepository {
   async getNoteById(userId: string, noteId: string): Promise<Note | undefined> {
     try {
       const noteModel = await this.getNoteModel();
-      const note = await noteModel.getById(userId, noteId);
-      if (note) {
-        note.createdAt = new Date(note.createdAt);
-        note.updatedAt = new Date(note.updatedAt);
-      }
-      return note;
+      return await noteModel.getById(userId, noteId);
     } catch (error) {
       throw error;
     }
@@ -58,7 +48,7 @@ export class NoteRepository implements INoteRepository {
   async addNote(note: Note): Promise<Note> {
     try {
       const noteModel = await this.getNoteModel();
-      return noteModel.create(note);
+      return await noteModel.create(note);
     } catch (error) {
       throw error;
     }

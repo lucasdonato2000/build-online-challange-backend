@@ -9,9 +9,12 @@ import {
   validateNoteParam,
   validateQuery,
 } from "../middleware";
+import { ContactService } from "../services";
+import { ContactRepository } from "../repositories";
 
 const noteRepository = new NoteRepository();
-const noteService = new NoteService(noteRepository);
+const contactService = new ContactService(new ContactRepository());
+const noteService = new NoteService(noteRepository, contactService);
 const noteController = new NoteController(noteService);
 
 const router = express.Router();

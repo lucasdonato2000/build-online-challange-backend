@@ -30,7 +30,7 @@ export class ContactRepository implements IContactRepository {
   ): Promise<Contact[]> {
     try {
       const contactModel = await this.getContactModel();
-      return contactModel.getContactsByUserId(userId, limit, offset);
+      return await contactModel.getContactsByUserId(userId, limit, offset);
     } catch (error) {
       throw error;
     }
@@ -42,7 +42,7 @@ export class ContactRepository implements IContactRepository {
   ): Promise<Contact | undefined> {
     try {
       const contactModel = await this.getContactModel();
-      return contactModel.getContactById(userId, contactId);
+      return await contactModel.getContactById(userId, contactId);
     } catch (error) {
       throw error;
     }
@@ -51,7 +51,7 @@ export class ContactRepository implements IContactRepository {
   async addContact(contact: Contact): Promise<void> {
     try {
       const contactModel = await this.getContactModel();
-      return contactModel.addContact(contact);
+      return await contactModel.addContact(contact);
     } catch (error) {
       throw error;
     }
@@ -64,14 +64,15 @@ export class ContactRepository implements IContactRepository {
   ): Promise<void> {
     try {
       const fields = Object.entries(contactData)
-        .filter(([, value]) => value !== undefined)
+        .filter(([_, value]) => value !== undefined && !(value instanceof Date))
         .map(([key]) => key as keyof Contact);
 
       const setClause = fields
         .map((field) => `${String(field)} = ?`)
         .join(", ");
-      const values = fields.map((field) => contactData[field]);
-
+      const values = fields.map(
+        (field) => contactData[field] as string | number | undefined
+      );
       const contactModel = await this.getContactModel();
       values.push(contactId, userId);
       await contactModel.updateContact(userId, contactId, setClause, values);

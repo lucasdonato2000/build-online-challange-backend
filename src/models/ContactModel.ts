@@ -56,7 +56,7 @@ export class ContactModel implements IContactModel {
   async addContact(contact: Contact): Promise<void> {
     try {
       await this.db.run(
-        "INSERT INTO contacts (id, userId, name, email, phone, address, profilePicture) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO contacts (id, userId, name, email, phone, address, title ,profilePicture, updatedAt, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
           contact.id,
           contact.userId,
@@ -64,7 +64,10 @@ export class ContactModel implements IContactModel {
           contact.email,
           contact.phone,
           contact.address,
+          contact.title,
           contact.profilePicture,
+          contact.updatedAt,
+          contact.createdAt,
         ]
       );
     } catch (error) {

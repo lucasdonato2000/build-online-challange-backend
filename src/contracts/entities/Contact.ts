@@ -12,7 +12,10 @@ interface Contact {
   email: string;
   phone: string;
   address: string;
+  title: string;
   profilePicture: string;
+  updatedAt?: Date | string;
+  createdAt?: Date | string;
 }
 
 export { Contact, ContactData };

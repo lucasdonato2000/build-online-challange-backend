@@ -71,8 +71,6 @@ export class NoteController implements INoteController {
       );
       res.status(201).json({
         ...newNote,
-        createAt: newNote.createdAt.toISOString(),
-        updatedAt: newNote.updatedAt.toISOString(),
       });
     } catch (error) {
       next(error);

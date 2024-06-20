@@ -3,6 +3,6 @@ export interface Note {
   userId: string;
   contactId: string;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }

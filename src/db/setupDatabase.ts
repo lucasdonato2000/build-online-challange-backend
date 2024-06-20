@@ -16,11 +16,16 @@ async function setupDatabase() {
       id TEXT PRIMARY KEY,
       userId TEXT,
       name TEXT NOT NULL,
+      title TEXT,
       email TEXT,
       phone TEXT,
       address TEXT,
       profilePicture TEXT,
+      createdAt DATE,
+      updatedAt DATE,
       FOREIGN KEY (userId) REFERENCES users(id),
+      UNIQUE (userId, email),
+      UNIQUE (userId, phone),
       UNIQUE (userId, name)
     );
   `);
