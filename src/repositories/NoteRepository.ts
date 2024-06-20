@@ -1,5 +1,5 @@
 import { NoteModel } from "../models/NoteModel";
-import { Note } from "../interfaces";
+import { Note } from "../contracts";
 import openDB from "../db/database";
 
 export class NoteRepository {
@@ -23,10 +23,19 @@ export class NoteRepository {
     }
   }
 
-  async getNotesByUserId(userId: string): Promise<Note[]> {
+  async getNotesByUserId(
+    userId: string,
+    limit: number,
+    offset: number
+  ): Promise<Note[]> {
     try {
       const noteModel = await this.getNoteModel();
-      return noteModel.getAllByUserId(userId);
+      const notes = await noteModel.getAllByUserId(userId, limit, offset);
+      notes.map((note) => {
+        note.createdAt = new Date(note.createdAt);
+        note.updatedAt = new Date(note.updatedAt);
+      });
+      return notes;
     } catch (error) {
       throw error;
     }
@@ -35,7 +44,12 @@ export class NoteRepository {
   async getNoteById(userId: string, noteId: string): Promise<Note | undefined> {
     try {
       const noteModel = await this.getNoteModel();
-      return noteModel.getById(userId, noteId);
+      const note = await noteModel.getById(userId, noteId);
+      if (note) {
+        note.createdAt = new Date(note.createdAt);
+        note.updatedAt = new Date(note.updatedAt);
+      }
+      return note;
     } catch (error) {
       throw error;
     }
@@ -45,19 +59,6 @@ export class NoteRepository {
     try {
       const noteModel = await this.getNoteModel();
       return noteModel.create(note);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateNote(
-    userId: string,
-    noteId: string,
-    noteData: Partial<Note>
-  ): Promise<Note | null> {
-    try {
-      const noteModel = await this.getNoteModel();
-      return noteModel.update(userId, noteId, noteData);
     } catch (error) {
       throw error;
     }

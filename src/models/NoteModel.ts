@@ -1,5 +1,5 @@
 import { Database } from "sqlite";
-import { Note } from "../interfaces";
+import { Note } from "../contracts";
 import { DatabaseError } from "../errors/DatabaseError";
 
 export class NoteModel {
@@ -9,11 +9,16 @@ export class NoteModel {
     this.db = db;
   }
 
-  async getAllByUserId(userId: string): Promise<Note[]> {
+  async getAllByUserId(
+    userId: string,
+    limit: number,
+    offset: number
+  ): Promise<Note[]> {
     try {
-      return await this.db.all<Note[]>("SELECT * FROM notes WHERE userId = ?", [
-        userId,
-      ]);
+      return await this.db.all<Note[]>(
+        "SELECT * FROM notes WHERE userId = ? LIMIT ? OFFSET ?",
+        [userId, limit, offset]
+      );
     } catch (error) {
       if (error instanceof Error) {
         throw new DatabaseError(
@@ -65,34 +70,6 @@ export class NoteModel {
         );
       } else {
         throw new DatabaseError(`Error creating note for user ${note.userId}`);
-      }
-    }
-  }
-
-  async update(
-    userId: string,
-    noteId: string,
-    noteData: Partial<Note>
-  ): Promise<Note | null> {
-    try {
-      const note = await this.getById(userId, noteId);
-      if (!note) return null;
-
-      const updatedNote = { ...note, ...noteData };
-      await this.db.run(
-        "UPDATE notes SET content = ?, updatedAt = ? WHERE id = ? AND userId = ?",
-        [updatedNote.content, updatedNote.updatedAt, noteId, userId]
-      );
-      return updatedNote;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new DatabaseError(
-          `Error updating note ${noteId} for user ${userId}: ${error.message}`
-        );
-      } else {
-        throw new DatabaseError(
-          `Error updating note ${noteId} for user ${userId}`
-        );
       }
     }
   }

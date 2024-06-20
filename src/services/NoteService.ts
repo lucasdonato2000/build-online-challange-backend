@@ -1,13 +1,18 @@
-import { Note } from "../interfaces";
+import { Note } from "../contracts";
 import { NoteRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
+import { INoteService } from "../contracts/services/NoteService";
 
-export class NoteService {
+export class NoteService implements INoteService {
   constructor(private noteRepository: NoteRepository) {}
 
-  async getNotes(userId: string): Promise<Note[]> {
+  async getNotes(
+    userId: string,
+    limit: number,
+    offset: number
+  ): Promise<Note[]> {
     try {
-      return await this.noteRepository.getNotesByUserId(userId);
+      return await this.noteRepository.getNotesByUserId(userId, limit, offset);
     } catch (error) {
       throw error;
     }
@@ -24,30 +29,18 @@ export class NoteService {
   async addNote(
     userId: string,
     contactId: string,
-    noteData: Partial<Note>
+    content: string
   ): Promise<Note> {
     try {
       const newNote: Note = {
         id: uuidv4(),
         userId,
         contactId,
-        content: noteData.content!,
+        content: content,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       return await this.noteRepository.addNote(newNote);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async modifyNote(
-    userId: string,
-    noteId: string,
-    noteData: Partial<Note>
-  ): Promise<Note | null> {
-    try {
-      return await this.noteRepository.updateNote(userId, noteId, noteData);
     } catch (error) {
       throw error;
     }

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
+import { INoteController } from "../contracts";
 import { UnauthorizedError, NotFoundError } from "../errors";
 import { NoteService } from "../services/NoteService";
 
-export class NoteController {
+export class NoteController implements INoteController {
   constructor(private noteService: NoteService) {}
 
   getNotesHandler = async (
@@ -14,7 +15,17 @@ export class NoteController {
       if (!req.user) {
         throw new UnauthorizedError("Unauthorized");
       }
-      const notes = await this.noteService.getNotes(req.user.id);
+
+      const { limit = "10", offset = "0" } = req.query;
+
+      const limitNumber = Number(limit);
+      const offsetNumber = Number(offset);
+
+      const notes = await this.noteService.getNotes(
+        req.user.id,
+        limitNumber,
+        offsetNumber
+      );
       res.json(notes);
     } catch (error) {
       next(error);
@@ -44,7 +55,7 @@ export class NoteController {
     }
   };
 
-  createNoteHandler = async (
+  addNoteHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -56,33 +67,13 @@ export class NoteController {
       const newNote = await this.noteService.addNote(
         req.user.id,
         req.params.contactId,
-        req.body
+        req.body.content
       );
-      res.status(201).json(newNote);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  updateNoteHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      if (!req.user) {
-        throw new UnauthorizedError("Unauthorized");
-      }
-      const updatedNote = await this.noteService.modifyNote(
-        req.user.id,
-        req.params.noteId,
-        req.body
-      );
-      if (updatedNote) {
-        res.json(updatedNote);
-      } else {
-        throw new NotFoundError("Note not found");
-      }
+      res.status(201).json({
+        ...newNote,
+        createAt: newNote.createdAt.toISOString(),
+        updatedAt: newNote.updatedAt.toISOString(),
+      });
     } catch (error) {
       next(error);
     }
