@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
+import { IUserController } from "../contracts";
 import { UserService } from "../services/UserService";
 
-export class UserController {
+export class UserController implements IUserController {
   constructor(private userService: UserService) {}
 
   getUserHandler = async (

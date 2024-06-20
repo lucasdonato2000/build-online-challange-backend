@@ -1,4 +1,4 @@
-import AppError from "../interfaces/appError";
+import AppError from "../contracts/errors/appError";
 
 export class NotFoundError extends Error implements AppError {
   status: number;

@@ -3,27 +3,39 @@ import { ContactController } from "../controllers";
 import {
   authMiddleware,
   uploadMiddleware,
-  validateContact,
+  validateAddContact,
+  validateContactParam,
+  validateQuery,
   validateUpdateContact,
 } from "../middleware";
+import { ContactRepository } from "../repositories";
+import { ContactService } from "../services";
 
-const contactController = new ContactController();
+const contactRepository = new ContactRepository();
+const contactService = new ContactService(contactRepository);
+const contactController = new ContactController(contactService);
 
 const router = express.Router();
 
 router.use(authMiddleware);
 
-router.get("/contacts", contactController.getContactsHandler);
-router.get("/contacts/:contactId", contactController.getContactHandler);
+router.get("/contacts", validateQuery, contactController.getContactsHandler);
+router.get(
+  "/contacts/:contactId",
+  validateContactParam,
+  contactController.getContactHandler
+);
 router.post(
   "/contacts",
   uploadMiddleware.single("profilePicture"),
-  validateContact,
+  validateAddContact,
+  validateContactParam,
   contactController.addContactHandler
 );
 router.put(
   "/contacts/:contactId",
   uploadMiddleware.single("profilePicture"),
+  validateContactParam,
   validateUpdateContact,
   contactController.updateContactHandler
 );

@@ -1,6 +1,6 @@
 import { JwtPayload } from "jsonwebtoken";
 import { User } from "../interfaces";
-import { DecodedToken } from "../../interfaces";
+import { DecodedToken } from "../../contracts";
 
 declare global {
   namespace Express {

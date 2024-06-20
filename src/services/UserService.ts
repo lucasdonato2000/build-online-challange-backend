@@ -1,7 +1,7 @@
-import { UserData } from "../interfaces";
+import { IUserService, UserData } from "../contracts";
 import { UserRepository } from "../repositories";
 
-export class UserService {
+export class UserService implements IUserService {
   constructor(private userRepository: UserRepository) {}
 
   async getUser(userId: string): Promise<UserData | undefined> {

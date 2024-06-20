@@ -1,8 +1,8 @@
 import { UserModel } from "../models/UserModel";
-import { User, UserData } from "../interfaces";
+import { IUserRepository, User, UserData } from "../contracts";
 import openDB from "../db/database";
 
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   private userModel: UserModel | null = null;
 
   constructor() {

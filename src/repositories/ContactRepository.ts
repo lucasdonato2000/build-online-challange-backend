@@ -1,8 +1,8 @@
 import { ContactModel } from "../models/ContactModel";
-import { Contact } from "../interfaces";
+import { Contact, IContactRepository } from "../contracts";
 import openDB from "../db/database";
 
-export class ContactRepository {
+export class ContactRepository implements IContactRepository {
   private contactModel: ContactModel | null = null;
 
   constructor() {

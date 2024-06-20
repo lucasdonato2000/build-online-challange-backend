@@ -1,8 +1,8 @@
 import { Database } from "sqlite";
-import { Note } from "../contracts";
+import { INoteModel, Note } from "../contracts";
 import { DatabaseError } from "../errors/DatabaseError";
 
-export class NoteModel {
+export class NoteModel implements INoteModel {
   private db: Database;
 
   constructor(db: Database) {

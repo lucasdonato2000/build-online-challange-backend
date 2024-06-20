@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { User } from "../interfaces";
+import { User } from "../contracts";
 import dotenv from "dotenv";
 import { MissingEnvError, UnauthorizedError } from "../errors";
 

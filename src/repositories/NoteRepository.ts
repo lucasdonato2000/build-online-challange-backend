@@ -1,8 +1,8 @@
 import { NoteModel } from "../models/NoteModel";
-import { Note } from "../contracts";
+import { INoteRepository, Note } from "../contracts";
 import openDB from "../db/database";
 
-export class NoteRepository {
+export class NoteRepository implements INoteRepository {
   private noteModel: NoteModel | null = null;
 
   constructor() {

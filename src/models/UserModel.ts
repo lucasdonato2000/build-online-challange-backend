@@ -1,8 +1,8 @@
 import { Database } from "sqlite";
-import { User } from "../interfaces";
+import { IUserModel, User } from "../contracts";
 import { DatabaseError } from "../errors/DatabaseError";
 
-export class UserModel {
+export class UserModel implements IUserModel {
   private db: Database;
 
   constructor(db: Database) {

@@ -1,14 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { ContactService } from "../services";
-import { ContactRepository } from "../repositories/ContactRepository";
 import { BadRequestError, NotFoundError, UnauthorizedError } from "../errors";
+import { IContactController } from "../contracts";
 
-export class ContactController {
-  private contactService: ContactService;
-
-  constructor() {
-    this.contactService = new ContactService(new ContactRepository());
-  }
+export class ContactController implements IContactController {
+  constructor(private contactService: ContactService) {}
 
   getContactsHandler = async (
     req: Request,

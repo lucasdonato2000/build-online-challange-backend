@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
+import { IAuthService } from "../contracts";
 import { UserRepository } from "../repositories";
 import { generateToken } from "../utils/jwt";
 
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
 
   async authenticateUser(

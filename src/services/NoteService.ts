@@ -1,7 +1,6 @@
-import { Note } from "../contracts";
+import { INoteService, Note } from "../contracts";
 import { NoteRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
-import { INoteService } from "../contracts/services/NoteService";
 
 export class NoteService implements INoteService {
   constructor(private noteRepository: NoteRepository) {}

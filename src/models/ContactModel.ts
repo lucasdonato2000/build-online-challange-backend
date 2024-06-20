@@ -1,8 +1,9 @@
 import { Database } from "sqlite";
-import { Contact } from "../interfaces";
+import { Contact } from "../contracts";
+import { IContactModel } from "../contracts";
 import { DatabaseError } from "../errors";
 
-export class ContactModel {
+export class ContactModel implements IContactModel {
   private db: Database;
 
   constructor(db: Database) {

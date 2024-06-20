@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRepository } from "../repositories/UserRespository";
 import { AuthService } from "../services/AuthService";
 import { UnauthorizedError } from "../errors";
+import { IAuthController } from "../contracts";
 
-const userRepository = new UserRepository();
-const authService = new AuthService(userRepository);
+export class AuthController implements IAuthController {
+  constructor(private authService: AuthService) {}
 
-export class AuthController {
   loginHandler = async (
     req: Request,
     res: Response,
@@ -14,7 +13,7 @@ export class AuthController {
   ): Promise<void> => {
     try {
       const { email, password } = req.body;
-      const token = await authService.authenticateUser(email, password);
+      const token = await this.authService.authenticateUser(email, password);
       if (token) {
         res.json({ token });
       } else {

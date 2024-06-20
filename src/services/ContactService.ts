@@ -1,10 +1,10 @@
-import { Contact } from "../interfaces";
+import { Contact, IContactService } from "../contracts";
 import { ContactRepository } from "../repositories";
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
 import fs from "fs";
 
-export class ContactService {
+export class ContactService implements IContactService {
   constructor(private contactRepository: ContactRepository) {}
 
   async getContacts(
