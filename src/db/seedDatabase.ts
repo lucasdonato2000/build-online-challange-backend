@@ -167,5 +167,5 @@ async function seedDatabase() {
     }
   }
 }
-
+seedDatabase();
 export default seedDatabase;
