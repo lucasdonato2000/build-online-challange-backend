@@ -22,8 +22,12 @@ app.use("/api", noteRoutes.router);
 
 app.use(errorHandler);
 
-setupDatabase().then(() => {
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+if (require.main === module) {
+  setupDatabase().then(() => {
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
   });
-});
+}
+
+export default app;

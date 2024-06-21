@@ -1,17 +1,48 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
-
-async function openDB() {
-  return open({
-    filename: "./database.sqlite",
-    driver: sqlite3.Database,
-  });
-}
+import openDB from "./database";
 
 async function seedDatabase() {
   const db = await openDB();
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT NOT NULL,
+      password TEXT NOT NULL
+    );
+  `);
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS contacts (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      name TEXT NOT NULL,
+      title TEXT,
+      email TEXT,
+      phone TEXT,
+      address TEXT,
+      profilePicture TEXT,
+      createdAt DATE,
+      updatedAt DATE,
+      FOREIGN KEY (userId) REFERENCES users(id),
+      UNIQUE (userId, email),
+      UNIQUE (userId, phone)
+    );
+  `);
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS notes (
+      id TEXT PRIMARY KEY,
+      userId TEXT,
+      contactId TEXT,
+      content TEXT,
+      createdAt DATE,
+      updatedAt DATE,
+      FOREIGN KEY (userId) REFERENCES users(id),
+      FOREIGN KEY (contactId) REFERENCES contacts(id)
+    );
+  `);
 
   const users = [
     { email: "user1@example.com", password: "password1" },
@@ -27,7 +58,6 @@ async function seedDatabase() {
         phone: "123-456-7890",
         address: "123 User1 St, City1",
         title: "Engineer",
-        profilePicture: "contact1_user1.png",
       },
       {
         name: "Contact2 User1",
@@ -35,7 +65,6 @@ async function seedDatabase() {
         phone: "123-456-7891",
         address: "124 User1 St, City1",
         title: "Doctor",
-        profilePicture: "contact2_user1.png",
       },
       {
         name: "Contact3 User1",
@@ -43,7 +72,6 @@ async function seedDatabase() {
         phone: "123-456-7892",
         address: "125 User1 St, City1",
         title: "Artist",
-        profilePicture: "contact3_user1.png",
       },
       {
         name: "Contact4 User1",
@@ -51,7 +79,6 @@ async function seedDatabase() {
         phone: "123-456-7893",
         address: "126 User1 St, City1",
         title: "Teacher",
-        profilePicture: "contact4_user1.png",
       },
       {
         name: "Contact5 User1",
@@ -59,7 +86,6 @@ async function seedDatabase() {
         phone: "123-456-7894",
         address: "127 User1 St, City1",
         title: "Chef",
-        profilePicture: "contact5_user1.png",
       },
     ],
 
@@ -70,7 +96,6 @@ async function seedDatabase() {
         phone: "223-456-7890",
         address: "223 User2 St, City2",
         title: "Lawyer",
-        profilePicture: "contact1_user2.png",
       },
       {
         name: "Contact2 User2",
@@ -78,7 +103,6 @@ async function seedDatabase() {
         phone: "223-456-7891",
         address: "224 User2 St, City2",
         title: "Musician",
-        profilePicture: "contact2_user2.png",
       },
       {
         name: "Contact3 User2",
@@ -86,7 +110,6 @@ async function seedDatabase() {
         phone: "223-456-7892",
         address: "225 User2 St, City2",
         title: "Scientist",
-        profilePicture: "contact3_user2.png",
       },
     ],
     [],
@@ -114,15 +137,13 @@ async function seedDatabase() {
       hashedPassword,
     ]);
 
-    console.log(`User seeded with email: ${user.email}`);
-
     for (const contact of contacts[i]) {
       const contactId = uuidv4();
       const createdAt = new Date().toISOString();
       const updatedAt = createdAt;
 
       await db.run(
-        "INSERT INTO contacts (id, userId, name, email, phone, address, title, profilePicture, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO contacts (id, userId, name, email, phone, address, title, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
           contactId,
           userId,
@@ -131,12 +152,10 @@ async function seedDatabase() {
           contact.phone,
           contact.address,
           contact.title,
-          contact.profilePicture,
           createdAt,
           updatedAt,
         ]
       );
-      console.log(`Contact seeded for user ${user.email}: ${contact.name}`);
 
       for (const note of notes[i]) {
         const noteId = uuidv4();
@@ -144,10 +163,9 @@ async function seedDatabase() {
           "INSERT INTO notes (id, userId, contactId, content, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)",
           [noteId, userId, contactId, note.content, createdAt, updatedAt]
         );
-        console.log(`Note seeded for contact ${contact.name}: ${note.content}`);
       }
     }
   }
 }
 
-seedDatabase().catch(console.error);
+export default seedDatabase;

@@ -53,10 +53,10 @@ export class ContactController implements IContactController {
         req.user.id,
         req.params.contactId
       );
+
       if (!contact) {
         throw new NotFoundError("Contact not found");
       }
-
       const imageUrl = this.urlMaker(req, contact.profilePicture);
 
       res.json({
@@ -112,7 +112,7 @@ export class ContactController implements IContactController {
         throw new NotFoundError("Contact not found");
       }
       const imageUrl = this.urlMaker(req, updatedContact.profilePicture);
-      res.status(201).json({ ...updatedContact, profilePicture: imageUrl });
+      res.status(200).json({ ...updatedContact, profilePicture: imageUrl });
     } catch (error) {
       next(error);
     }
