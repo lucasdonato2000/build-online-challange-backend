@@ -76,6 +76,14 @@ export class ContactService implements IContactService {
         contactId
       );
       if (!contact) {
+        if (contactData.profilePicture) {
+          const filePath = path.join(
+            __dirname,
+            "../../images",
+            contactData.profilePicture
+          );
+          fs.rmSync(filePath);
+        }
         return null;
       }
       contactData.updatedAt = new Date().toISOString();
