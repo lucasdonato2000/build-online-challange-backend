@@ -31,8 +31,10 @@ export class ContactController implements IContactController {
         offsetNumber
       );
       contacts.map((contact) => {
-        const imageUrl = this.urlMaker(req, contact.profilePicture);
-        contact.profilePicture = imageUrl;
+        if (contact.profilePicture) {
+          const imageUrl = this.urlMaker(req, contact.profilePicture);
+          contact.profilePicture = imageUrl;
+        }
       });
       res.json(contacts);
     } catch (error) {
@@ -57,11 +59,14 @@ export class ContactController implements IContactController {
       if (!contact) {
         throw new NotFoundError("Contact not found");
       }
-      const imageUrl = this.urlMaker(req, contact.profilePicture);
+
+      if (contact.profilePicture) {
+        const imageUrl = this.urlMaker(req, contact.profilePicture);
+        contact.profilePicture = imageUrl;
+      }
 
       res.json({
-        ...contact,
-        profilePicture: imageUrl,
+        contact,
       });
     } catch (error) {
       next(error);
@@ -86,8 +91,14 @@ export class ContactController implements IContactController {
         throw new Error("Unexpected error adding new user");
       }
 
-      const imageUrl = this.urlMaker(req, newContact.profilePicture);
-      res.status(201).json({ ...newContact, profilePicture: imageUrl });
+      if (newContact.profilePicture) {
+        const imageUrl = this.urlMaker(req, newContact.profilePicture);
+        newContact.profilePicture = imageUrl;
+      }
+
+      res.json({
+        newContact,
+      });
     } catch (error) {
       next(error);
     }
@@ -111,8 +122,15 @@ export class ContactController implements IContactController {
       if (!updatedContact) {
         throw new NotFoundError("Contact not found");
       }
-      const imageUrl = this.urlMaker(req, updatedContact.profilePicture);
-      res.status(200).json({ ...updatedContact, profilePicture: imageUrl });
+
+      if (updatedContact.profilePicture) {
+        const imageUrl = this.urlMaker(req, updatedContact.profilePicture);
+        updatedContact.profilePicture = imageUrl;
+      }
+
+      res.json({
+        updatedContact,
+      });
     } catch (error) {
       next(error);
     }
