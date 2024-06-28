@@ -26,11 +26,17 @@ export class ContactRepository implements IContactRepository {
   async getContactsByUserId(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Contact[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; contacts: Contact[] }> {
     try {
       const contactModel = await this.getContactModel();
-      return await contactModel.getContactsByUserId(userId, limit, offset);
+      return await contactModel.getContactsByUserId(
+        userId,
+        limit,
+        offset,
+        searchTerm
+      );
     } catch (error) {
       throw error;
     }

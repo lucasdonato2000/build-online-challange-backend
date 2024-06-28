@@ -4,8 +4,9 @@ export interface IContactService {
   getContacts(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Contact[]>;
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; contacts: Contact[] }>;
   getContact(userId: string, contactId: string): Promise<Contact | undefined>;
   addContact(userId: string, contactData: Partial<Contact>): Promise<Contact>;
   modifyContact(

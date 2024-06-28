@@ -6,5 +6,5 @@ export const updateContactSchema = Joi.object({
   phone: Joi.string().optional(),
   address: Joi.string().optional(),
   title: Joi.string().optional(),
-  profilePicture: Joi.string().optional(),
+  profilePicture: Joi.binary().optional(),
 }).min(1);

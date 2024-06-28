@@ -4,8 +4,9 @@ export interface IContactModel {
   getContactsByUserId(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Contact[]>;
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; contacts: Contact[] }>;
   getContactById(
     userId: string,
     contactId: string

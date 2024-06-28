@@ -31,7 +31,7 @@ describe("ContactService", () => {
     const error = new Error("Database error");
     mockContactRepository.getContactsByUserId.mockRejectedValueOnce(error);
 
-    await expect(contactService.getContacts(userId, 10, 0)).rejects.toThrow(
+    await expect(contactService.getContacts(userId, 10, 0, "")).rejects.toThrow(
       "Database error"
     );
   });

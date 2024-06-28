@@ -16,19 +16,21 @@ export class ContactController implements IContactController {
         throw new UnauthorizedError("Unauthorized");
       }
 
-      const { limit = "10", offset = "0" } = req.query;
+      const { limit = "10", offset = "0", searchTerm = "" } = req.query;
 
       const limitNumber = Number(limit);
       const offsetNumber = Number(offset);
+      const searchTermString = String(searchTerm);
 
       if (Number.isNaN(limitNumber) || Number.isNaN(offsetNumber)) {
         throw new BadRequestError("Invalid pagination parameters");
       }
 
-      const contacts = await this.contactService.getContacts(
+      const { total, contacts } = await this.contactService.getContacts(
         req.user.id,
         limitNumber,
-        offsetNumber
+        offsetNumber,
+        searchTermString
       );
       contacts.map((contact) => {
         if (contact.profilePicture) {
@@ -36,12 +38,11 @@ export class ContactController implements IContactController {
           contact.profilePicture = imageUrl;
         }
       });
-      res.json(contacts);
+      res.json({ total, contacts });
     } catch (error) {
       next(error);
     }
   };
-
   getContactHandler = async (
     req: Request,
     res: Response,

@@ -10,13 +10,15 @@ export class ContactService implements IContactService {
   async getContacts(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Contact[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; contacts: Contact[] }> {
     try {
       return await this.contactRepository.getContactsByUserId(
         userId,
         limit,
-        offset
+        offset,
+        searchTerm
       );
     } catch (error) {
       throw error;
@@ -55,12 +57,19 @@ export class ContactService implements IContactService {
       await this.contactRepository.addContact(newContact);
       return newContact;
     } catch (error) {
-      const filePath = path.join(
-        __dirname,
-        "../../images",
-        newContact.profilePicture
-      );
-      fs.rmSync(filePath);
+      if (contactData.profilePicture) {
+        const filePath = path.join(
+          __dirname,
+          "../../images",
+          newContact.profilePicture
+        );
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.rmSync(filePath);
+          }
+        });
+      }
+
       throw error;
     }
   }
@@ -82,7 +91,11 @@ export class ContactService implements IContactService {
             "../../images",
             contactData.profilePicture
           );
-          fs.rmSync(filePath);
+          fs.access(filePath, fs.constants.F_OK, (err) => {
+            if (!err) {
+              fs.rmSync(filePath);
+            }
+          });
         }
         return null;
       }
@@ -92,12 +105,19 @@ export class ContactService implements IContactService {
         contactId,
         contactData
       );
-      const filePath = path.join(
-        __dirname,
-        "../../images",
-        contact.profilePicture
-      );
-      fs.rmSync(filePath);
+      if (contactData.profilePicture && contact.profilePicture) {
+        const filePath = path.join(
+          __dirname,
+          "../../images",
+
+          contact.profilePicture
+        );
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.rmSync(filePath);
+          }
+        });
+      }
       return { ...contact, ...contactData };
     } catch (error) {
       throw error;

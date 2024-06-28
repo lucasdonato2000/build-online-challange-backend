@@ -13,13 +13,19 @@ export class ContactModel implements IContactModel {
   async getContactsByUserId(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Contact[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; contacts: Contact[] }> {
     try {
-      return await this.db.all<Contact[]>(
-        "SELECT * FROM contacts WHERE userId = ? LIMIT ? OFFSET ?",
-        [userId, limit, offset]
+      const contacts = await this.db.all<Contact[]>(
+        `SELECT * FROM contacts WHERE userId = ? AND name LIKE ? LIMIT ? OFFSET ?`,
+        [userId, `%${searchTerm}%`, limit, offset]
       );
+      const total = await this.db.get<{ count: number }>(
+        `SELECT COUNT(*) as count FROM contacts WHERE userId = ? AND name LIKE ?`,
+        [userId, `%${searchTerm}%`]
+      );
+      return { total: total?.count ?? 0, contacts };
     } catch (error) {
       if (error instanceof Error) {
         throw new DatabaseError(
