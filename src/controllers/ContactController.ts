@@ -97,7 +97,7 @@ export class ContactController implements IContactController {
         newContact.profilePicture = imageUrl;
       }
 
-      res.json({
+      res.status(201).json({
         newContact,
       });
     } catch (error) {

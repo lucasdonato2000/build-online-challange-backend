@@ -49,13 +49,14 @@ describe("Contact API", () => {
       .field("phone", "098-765-4321")
       .field("address", "456 Another St")
       .field("title", "Developer");
-
     expect(response.status).toBe(201);
-    expect(response.body).toHaveProperty("id");
-    expect(response.body.name).toBe("Jane Doe");
+    expect(response.body).toHaveProperty("newContact");
+    expect(response.body.newContact).toHaveProperty("id");
+    expect(response.body.newContact.name).toBe("Jane Doe");
 
-    profilePicture = response.body.profilePicture.split("/").pop() || "";
-    contactId = response.body.id;
+    profilePicture =
+      response.body.newContact.profilePicture.split("/").pop() || "";
+    contactId = response.body.newContact.id;
   });
 
   it("should fail to create a new contact with bad request data", async () => {
@@ -126,8 +127,8 @@ describe("Contact API", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
-    expect(response.body[0].name).toBe("John Doe");
+    expect(response.body.contacts).toHaveLength(2);
+    expect(response.body.contacts[0].name).toBe("John Doe");
   });
 
   it("should get contacts with custom pagination", async () => {
@@ -148,8 +149,8 @@ describe("Contact API", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].name).toBe("John Doe");
+    expect(response.body.contacts).toHaveLength(1);
+    expect(response.body.contacts[0].name).toBe("John Doe");
   });
 
   it("should fail to fetch contacts with invalid authorization token", async () => {
@@ -208,7 +209,7 @@ describe("Contact API", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.name).toBe("John Doe");
+    expect(response.body.contact.name).toBe("John Doe");
   });
 
   it("should return 404 if contact not found", async () => {
@@ -241,9 +242,8 @@ describe("Contact API", () => {
         name: "John Doe Updated",
         email: "john_updated@example.com",
       });
-
     expect(response.status).toBe(200);
-    expect(response.body.name).toBe("John Doe Updated");
+    expect(response.body.updatedContact.name).toBe("John Doe Updated");
   });
 
   it("should fail to update a contact with invalid file type", async () => {
