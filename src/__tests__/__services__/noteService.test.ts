@@ -29,7 +29,7 @@ describe("NoteService", () => {
     const error = new Error("Database error");
     mockNoteRepository.getNotesByUserId.mockRejectedValueOnce(error);
 
-    await expect(noteService.getNotes(userId, 10, 0)).rejects.toThrow(
+    await expect(noteService.getNotes(userId, 10, 0, "")).rejects.toThrow(
       "Database error"
     );
   });

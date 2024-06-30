@@ -26,11 +26,12 @@ export class NoteRepository implements INoteRepository {
   async getNotesByUserId(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Note[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; notes: Note[] }> {
     try {
       const noteModel = await this.getNoteModel();
-      return await noteModel.getAllByUserId(userId, limit, offset);
+      return await noteModel.getAllByUserId(userId, limit, offset, searchTerm);
     } catch (error) {
       throw error;
     }

@@ -16,17 +16,19 @@ export class NoteController implements INoteController {
         throw new UnauthorizedError("Unauthorized");
       }
 
-      const { limit = "10", offset = "0" } = req.query;
+      const { limit = "10", offset = "0", searchTerm = "" } = req.query;
 
       const limitNumber = Number(limit);
       const offsetNumber = Number(offset);
+      const searchTermString = String(searchTerm);
 
-      const notes = await this.noteService.getNotes(
+      const result = await this.noteService.getNotes(
         req.user.id,
         limitNumber,
-        offsetNumber
+        offsetNumber,
+        searchTermString
       );
-      res.json(notes);
+      res.json(result);
     } catch (error) {
       next(error);
     }

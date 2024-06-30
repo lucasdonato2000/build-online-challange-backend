@@ -12,13 +12,19 @@ export class NoteModel implements INoteModel {
   async getAllByUserId(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Note[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; notes: Note[] }> {
     try {
-      return await this.db.all<Note[]>(
-        "SELECT * FROM notes WHERE userId = ? LIMIT ? OFFSET ?",
-        [userId, limit, offset]
+      const totalResult = await this.db.get<{ count: number }>(
+        "SELECT COUNT(*) as count FROM notes WHERE userId = ? AND content LIKE ?",
+        [userId, `%${searchTerm}%`]
       );
+      const notes = await this.db.all<Note[]>(
+        "SELECT * FROM notes WHERE userId = ? AND content LIKE ? LIMIT ? OFFSET ?",
+        [userId, `%${searchTerm}%`, limit, offset]
+      );
+      return { total: totalResult?.count ?? 0, notes };
     } catch (error) {
       if (error instanceof Error) {
         throw new DatabaseError(

@@ -13,10 +13,16 @@ export class NoteService implements INoteService {
   async getNotes(
     userId: string,
     limit: number,
-    offset: number
-  ): Promise<Note[]> {
+    offset: number,
+    searchTerm: string
+  ): Promise<{ total: number; notes: Note[] }> {
     try {
-      return await this.noteRepository.getNotesByUserId(userId, limit, offset);
+      return await this.noteRepository.getNotesByUserId(
+        userId,
+        limit,
+        offset,
+        searchTerm
+      );
     } catch (error) {
       throw error;
     }
