@@ -28,7 +28,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  const imagePath = path.join(__dirname, `../../images/${profilePicture}`);
+  const imagePath = path.join(__dirname, `../../../images/${profilePicture}`);
   if (fs.existsSync(imagePath)) {
     fs.unlinkSync(imagePath);
   }
@@ -234,7 +234,6 @@ describe("Contact API", () => {
       title: "Engineer",
       profilePicture: profilePicture,
     });
-
     const response = await request(app)
       .put(`/api/contacts/${contactId}`)
       .set("Authorization", `Bearer ${token}`)

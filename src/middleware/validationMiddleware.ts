@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import path from "path";
 import {
   addContactSchema,
   addNoteSchema,
@@ -7,6 +8,7 @@ import {
   noteParamSchema,
   querySchema,
 } from "../utils/joi-schemas";
+import fs from "fs";
 
 export const validateAddContact = (
   req: Request,
@@ -15,6 +17,8 @@ export const validateAddContact = (
 ) => {
   const { error } = addContactSchema.validate(req.body, { abortEarly: false });
   if (error) {
+    if (req.body.profilePicture) deleteFile(req.body.profilePicture);
+
     res.status(400).json({ error: error.details[0].message });
   } else {
     next();
@@ -30,6 +34,8 @@ export const validateUpdateContact = (
     abortEarly: false,
   });
   if (error) {
+    if (req.body.profilePicture) deleteFile(req.body.profilePicture);
+
     res.status(400).json({ error: error.details[0].message });
   } else {
     next();
@@ -45,6 +51,8 @@ export const validateContactParam = (
     abortEarly: false,
   });
   if (error) {
+    if (req.body.profilePicture) deleteFile(req.body.profilePicture);
+
     res.status(400).json({ error: error.details[0].message });
   } else {
     next();
@@ -91,4 +99,19 @@ export const validateQuery = (
   }
   req.query = value;
   next();
+};
+
+const deleteFile = (fileName: string) => {
+  const filePath = path.join(
+    __dirname,
+    "../../images",
+
+    fileName
+  );
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (!err) {
+      fs.rmSync(filePath);
+    }
+  });
 };

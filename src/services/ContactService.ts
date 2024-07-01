@@ -61,7 +61,7 @@ export class ContactService implements IContactService {
         const filePath = path.join(
           __dirname,
           "../../images",
-          newContact.profilePicture
+          contactData.profilePicture
         );
         fs.access(filePath, fs.constants.F_OK, (err) => {
           if (!err) {
@@ -91,6 +91,7 @@ export class ContactService implements IContactService {
             "../../images",
             contactData.profilePicture
           );
+
           fs.access(filePath, fs.constants.F_OK, (err) => {
             if (!err) {
               fs.rmSync(filePath);
@@ -112,6 +113,7 @@ export class ContactService implements IContactService {
 
           contact.profilePicture
         );
+
         fs.access(filePath, fs.constants.F_OK, (err) => {
           if (!err) {
             fs.rmSync(filePath);
@@ -120,6 +122,21 @@ export class ContactService implements IContactService {
       }
       return { ...contact, ...contactData };
     } catch (error) {
+      if (contactData.profilePicture) {
+        const filePath = path.join(
+          __dirname,
+          "../../images",
+
+          contactData.profilePicture
+        );
+
+        fs.access(filePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.rmSync(filePath);
+          }
+        });
+      }
+
       throw error;
     }
   }

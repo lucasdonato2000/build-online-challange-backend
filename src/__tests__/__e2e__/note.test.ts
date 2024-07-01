@@ -92,8 +92,8 @@ describe("Note API", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(1);
-    expect(response.body[0].content).toBe("This is a note");
+    expect(response.body.notes).toHaveLength(1);
+    expect(response.body.notes[0].content).toBe("This is a note");
   });
 
   it("should fail to fetch notes with invalid authorization token", async () => {

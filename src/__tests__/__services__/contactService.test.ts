@@ -48,11 +48,27 @@ describe("ContactService", () => {
   it("should handle repository errors when adding a contact and remove the profile picture", async () => {
     const error = new Error("Database error");
     mockContactRepository.addContact.mockRejectedValueOnce(error);
+    jest
+      .spyOn(fs, "access")
+      .mockImplementation(
+        (path: fs.PathLike, modeOrCallback: any, maybeCallback?: any) => {
+          const callback =
+            typeof modeOrCallback === "function"
+              ? modeOrCallback
+              : maybeCallback;
+          callback(null);
+        }
+      );
     jest.spyOn(fs, "rmSync").mockImplementation(() => {});
 
     await expect(
       contactService.addContact(userId, contactData)
     ).rejects.toThrow("Database error");
+    expect(fs.access).toHaveBeenCalledWith(
+      path.join(__dirname, "../../../images", contactData.profilePicture!),
+      fs.constants.F_OK,
+      expect.any(Function)
+    );
     expect(fs.rmSync).toHaveBeenCalledWith(
       path.join(__dirname, "../../../images", contactData.profilePicture!)
     );
@@ -107,14 +123,29 @@ describe("ContactService", () => {
     };
     mockContactRepository.getContactById.mockResolvedValueOnce(contact);
     mockContactRepository.updateContact.mockResolvedValueOnce(undefined);
+    jest
+      .spyOn(fs, "access")
+      .mockImplementation(
+        (path: fs.PathLike, modeOrCallback: any, maybeCallback?: any) => {
+          const callback =
+            typeof modeOrCallback === "function"
+              ? modeOrCallback
+              : maybeCallback;
+          callback(null);
+        }
+      );
     jest.spyOn(fs, "rmSync").mockImplementation(() => {});
-
     const result = await contactService.modifyContact(
       userId,
       contactId,
       contactData
     );
 
+    expect(fs.access).toHaveBeenCalledWith(
+      path.join(__dirname, "../../../images", contact.profilePicture),
+      fs.constants.F_OK,
+      expect.any(Function)
+    );
     expect(fs.rmSync).toHaveBeenCalledWith(
       path.join(__dirname, "../../../images", contact.profilePicture)
     );
