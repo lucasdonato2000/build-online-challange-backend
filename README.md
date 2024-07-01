@@ -33,6 +33,14 @@ Start the development server:
 npm run dev
 ```
 
+## Running the Project
+
+After you do what is said beforem, you can try running tests while the project is not up:
+
+```bash
+npm run test
+```
+
 ## Environment Variables
 
 Make sure to create a `.env` file in the root directory of the project with the following variables:

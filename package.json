@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "npx tsc",
-    "dev": "npx nodemon --watch src --ext ts --exec \"npx tsc && node dist/index.js\"",
+    "dev": "npx nodemon --watch src --ext ts --exec \"npx tsc && node ./src/scripts/createImagesDir.js && node dist/index.js  \"",
     "ts-node": "npx ts-node --esm src/index.ts",
     "tsc-watch": "npx tsc -w",
     "seed": "npx ts-node src/db/seedDatabase.ts",
