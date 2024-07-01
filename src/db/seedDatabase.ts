@@ -53,62 +53,61 @@ async function seedDatabase() {
   const contacts = [
     [
       {
-        name: "Contact1 User1",
-        email: "contact1.user1@example.com",
+        name: "Alice Johnson",
+        email: "alice.johnson@example.com",
         phone: "123-456-7890",
-        address: "123 User1 St, City1",
+        address: "123 Main St, Springfield, IL",
         title: "Engineer",
       },
       {
-        name: "Contact2 User1",
-        email: "contact2.user1@example.com",
+        name: "David Brown",
+        email: "david.brown@example.com",
         phone: "123-456-7891",
-        address: "124 User1 St, City1",
+        address: "124 Elm St, Springfield, IL",
         title: "Doctor",
       },
       {
-        name: "Contact3 User1",
-        email: "contact3.user1@example.com",
+        name: "Emily Davis",
+        email: "emily.davis@example.com",
         phone: "123-456-7892",
-        address: "125 User1 St, City1",
+        address: "125 Oak St, Springfield, IL",
         title: "Artist",
       },
       {
-        name: "Contact4 User1",
-        email: "contact4.user1@example.com",
+        name: "Frank Miller",
+        email: "frank.miller@example.com",
         phone: "123-456-7893",
-        address: "126 User1 St, City1",
+        address: "126 Pine St, Springfield, IL",
         title: "Teacher",
       },
       {
-        name: "Contact5 User1",
-        email: "contact5.user1@example.com",
+        name: "Grace Wilson",
+        email: "grace.wilson@example.com",
         phone: "123-456-7894",
-        address: "127 User1 St, City1",
+        address: "127 Maple St, Springfield, IL",
         title: "Chef",
       },
     ],
-
     [
       {
-        name: "Contact1 User2",
-        email: "contact1.user2@example.com",
+        name: "Henry Moore",
+        email: "henry.moore@example.com",
         phone: "223-456-7890",
-        address: "223 User2 St, City2",
+        address: "223 Main St, Springfield, IL",
         title: "Lawyer",
       },
       {
-        name: "Contact2 User2",
-        email: "contact2.user2@example.com",
+        name: "Irene Clark",
+        email: "irene.clark@example.com",
         phone: "223-456-7891",
-        address: "224 User2 St, City2",
+        address: "224 Elm St, Springfield, IL",
         title: "Musician",
       },
       {
-        name: "Contact3 User2",
-        email: "contact3.user2@example.com",
+        name: "Jack Lewis",
+        email: "jack.lewis@example.com",
         phone: "223-456-7892",
-        address: "225 User2 St, City2",
+        address: "225 Oak St, Springfield, IL",
         title: "Scientist",
       },
     ],
@@ -117,12 +116,12 @@ async function seedDatabase() {
 
   const notes = [
     [
-      { content: "Note1 for Contact1 User1" },
-      { content: "Note2 for Contact2 User1" },
+      { content: "Meeting with Alice about the new project" },
+      { content: "Discussing medical advancements with David" },
     ],
     [
-      { content: "Note1 for Contact1 User2" },
-      { content: "Note2 for Contact2 User2" },
+      { content: "Legal consultation with Henry" },
+      { content: "Music rehearsal with Irene" },
     ],
   ];
 
@@ -167,5 +166,6 @@ async function seedDatabase() {
     }
   }
 }
+
 seedDatabase();
 export default seedDatabase;
